@@ -1,34 +1,45 @@
 import { supabase } from "@/utils/supabase";
 import Link from "next/link";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip as RechartsTooltip,
-  Legend,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-} from 'recharts';
+
+// Recharts imports
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export const revalidate = 0; // 실시간 반영을 위해 SSR 캐시 비활성화
 
-// Placeholder data for sales comparison
-const salesComparisonData = [
-  { name: 'Tesla', sales: 15000, pv: 15000, amt: 15000 },
-  { name: 'Hyundai', sales: 12000, pv: 12000, amt: 12000 },
+// Fake sales data for Tesla and Hyundai
+const salesData = [
+  { year: 2020, tesla: 500000, hyundai: 350000 },
+  { year: 2021, tesla: 900000, hyundai: 450000 },
+  { year: 2022, tesla: 1300000, hyundai: 600000 },
+  { year: 2023, tesla: 1700000, hyundai: 750000 },
+  { year: 2024, tesla: 1900000, hyundai: 850000 },
 ];
 
-const pieChartData = [
-  { name: 'Tesla', value: 15000 },
-  { name: 'Hyundai', value: 12000 },
-];
+// Chart component using Recharts
+function SalesChart() {
+  return (
+    <div className="mt-10 p-6 bg-white shadow-sm rounded-lg border border-gray-200">
+      <h2 className="text-2xl font-bold mb-4">자동차 판매량 추이 (가상 데이터)</h2>
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart
+          data={salesData}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="year" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="tesla" stroke="#8884d8" strokeWidth={2} activeDot={{ r: 8 }} name="Tesla" />
+          <Line type="monotone" dataKey="hyundai" stroke="#82ca9d" strokeWidth={2} name="Hyundai" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
 
-const COLORS = ['#0088FE', '#00C49F']; // Example colors
-
-export default async function Home() {
-  const { data: tasks, error } = await supabase
+export default function Home() {
+  const { data: tasks, error } = supabase
     .from("agent_tasks")
     .select("*")
     .order("created_at", { ascending: false });
@@ -45,60 +56,9 @@ export default async function Home() {
           <p className="text-gray-500 mt-2">이메일로 수신된 작업 의뢰와 현재 처리 상태를 모니터링합니다.</p>
         </header>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-          {/* Pie Chart */}
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">판매량 비율</h2>
-            <div className="flex justify-center items-center h-64">
-              <PieChart width={250} height={200}>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-                <Legend />
-              </PieChart>
-            </div>
-          </div>
+        <SalesChart /> {/* Render the Recharts component here */}
 
-          {/* Bar Chart */}
-          <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">판매량 비교</h2>
-            <div className="flex justify-center items-center h-64">
-              <BarChart
-                width={300}
-                height={200}
-                data={salesComparisonData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="sales" fill="#8884d8" barSize={30} />
-              </BarChart>
-            </div>
-          </div>
-        </div>
-
-        {/* Task Table Section */}
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
+        <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 mt-8">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
