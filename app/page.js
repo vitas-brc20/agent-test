@@ -1,165 +1,116 @@
-'use client';
+// app/page.js
+import { Inter } from 'next/font/google';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/utils/supabase';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-// Placeholder for Supabase client initialization if needed directly here, or assume utils/supabase is set up.
-// For this example, we'll simulate data fetching if Supabase is not directly accessible or for demonstration.
-
-const fakeSalesData = [
-  { month: 'Jan', tesla: 5000, hyundai: 7000 },
-  { month: 'Feb', tesla: 5500, hyundai: 7200 },
-  { month: 'Mar', tesla: 6000, hyundai: 7500 },
-  { month: 'Apr', tesla: 6200, hyundai: 7800 },
-  { month: 'May', tesla: 6500, hyundai: 8000 },
-  { month: 'Jun', tesla: 6800, hyundai: 8200 },
+// Placeholder data for Tesla and Hyundai sales
+const salesData = [
+  { month: 'Jan', tesla: 4000, hyundai: 3500 },
+  { month: 'Feb', tesla: 4200, hyundai: 3700 },
+  { month: 'Mar', tesla: 4500, hyundai: 3900 },
+  { month: 'Apr', tesla: 4300, hyundai: 3800 },
+  { month: 'May', tesla: 4700, hyundai: 4100 },
+  { month: 'Jun', tesla: 5000, hyundai: 4300 },
 ];
 
-export default function DashboardPage() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const inter = Inter({ subsets: ['latin'] });
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // In a real application, you would fetch from Supabase like this:
-        // const { data, error: supabaseError } = await supabase.from('agent_tasks').select('*').order('created_at', { ascending: false });
-        // if (supabaseError) throw supabaseError;
-        // setTasks(data);
-
-        // Using fake data for demonstration as per requirements
-        setTasks([
-          { id: 1, status: 'completed', subject: 'Refactor user authentication', branch_name: 'feature/auth-refactor', pr_url: 'http://github.com/pr/1', sender_email: 'user1@example.com', created_at: '2023-10-26T10:00:00Z' },
-          { id: 2, status: 'running', subject: 'Implement new dashboard charts', branch_name: 'feature/charts', pr_url: 'http://github.com/pr/2', sender_email: 'user2@example.com', created_at: '2023-10-26T09:30:00Z' },
-          { id: 3, status: 'pending', subject: 'Fix bug in email notification', branch_name: 'fix/email-bug', pr_url: null, sender_email: 'user1@example.com', created_at: '2023-10-26T08:00:00Z' },
-          { id: 4, status: 'failed', subject: 'Deploy staging environment', branch_name: 'deploy/staging', pr_url: 'http://github.com/pr/3', sender_email: 'admin@example.com', created_at: '2023-10-25T18:00:00Z' },
-        ]);
-      } catch (err) {
-        setError('작업 목록을 불러오는 중 오류가 발생했습니다.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []); // Empty dependency array means this effect runs once after the initial render
-
+export default function HomePage() {
   return (
-    <main className="min-h-screen p-8 bg-gray-50 text-gray-900">
-      <div className="max-w-5xl mx-auto">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold tracking-tight">AI 에이전트 대시보드</h1>
-          <p className="text-gray-500 mt-2">이메일로 수신된 작업 의뢰와 현재 처리 상태를 모니터링합니다.</p>
-        </header>
+    <div className="min-h-screen p-8 font-sans bg-gradient-to-b from-blue-400 to-green-400 via-yellow-300">
+      {/* Mario Theme Header */}
+      <header className="text-center mb-12 text-white">
+        <h1 className="text-6xl font-extrabold mb-4 tracking-wide" style={{ fontFamily: "'Press Start 2P', cursive", textShadow: "4px 4px #8B0000, 2px 2px #FF0000" }}>
+          Welcome to Super Mario World 1-1!
+        </h1>
+        <p className="text-2xl mb-6 text-yellow-300" style={{ textShadow: "1px 1px #000" }}>
+          Your Adventure Starts Here!
+        </p>
+        {/* Placeholder for Mario elements like clouds, blocks, etc. */}
+        <div className="flex justify-center space-x-6 mt-6">
+          <div className="w-20 h-12 bg-white rounded-full shadow-[0_0_0_5px_white,_0_5px_0_-2px_#ccc] -mb-3"></div>
+          <div className="w-16 h-16 bg-yellow-400 border-4 border-solid border-orange-700 flex items-center justify-center text-2xl font-bold text-red-800 shadow-[-6px_0_0_#8B4513,inset_0_-6px_#8B4513]" style={{ borderRadius: '8px' }}>?</div>
+          <div className="w-16 h-16 bg-yellow-400 border-4 border-solid border-orange-700 flex items-center justify-center text-2xl font-bold text-red-800 shadow-[-6px_0_0_#8B4513,inset_0_-6px_#8B4513]" style={{ borderRadius: '8px' }}></div>
+          <div className="w-18 h-24 bg-green-700 border-b-8 border-solid border-green-900 relative rounded-t-lg">
+            <div className="absolute -top-8 -left-2 w-20 h-8 bg-green-700 rounded-lg border-b-8 border-solid border-green-900"></div>
+          </div>
+        </div>
+      </header>
 
-        <section className="mb-10 bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold mb-4">최근 작업 현황</h2>
-          <div className="h-80">
+      <main className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Sales Dashboard Section */}
+        <section className="bg-orange-500 p-6 rounded-xl shadow-xl border-4 border-solid border-yellow-700 text-white">
+          <h2 className="text-4xl font-bold mb-5 tracking-wide" style={{ fontFamily: "'Press Start 2P', cursive", textShadow: "2px 2px #8B0000" }}>
+            Vehicle Sales Data
+          </h2>
+          <div className="w-full h-[400px] bg-transparent rounded-lg p-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={fakeSalesData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                data={salesData}
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="tesla" stroke="#8884d8" activeDot={{ r: 8 }} name="Tesla Sales" />
-                <Line type="monotone" dataKey="hyundai" stroke="#82ca9d" activeDot={{ r: 8 }} name="Hyundai Sales" />
+                <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.4)" />
+                <XAxis dataKey="month" stroke="#FFFFFF" tick={{ fontFamily: "'Press Start 2P', cursive", fontSize: 12 }} />
+                <YAxis stroke="#FFFFFF" tick={{ fontFamily: "'Press Start 2P', cursive", fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#f0e68c', border: '3px solid #8B4513', borderRadius: '8px', fontFamily: "'Press Start 2P', cursive" }}
+                  labelStyle={{ color: '#333', fontWeight: 'bold' }}
+                  itemStyle={{ color: '#333' }}
+                />
+                <Legend wrapperStyle={{ color: '#fff', fontFamily: "'Press Start 2P', cursive" }} />
+                <Line
+                  type="monotone"
+                  dataKey="tesla"
+                  name="Tesla"
+                  stroke="#FF0000" // Red
+                  strokeWidth={3}
+                  activeDot={{ r: 8, fill: '#FF0000' }}
+                  dot={{ r: 5, fill: '#FF0000' }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="hyundai"
+                  name="Hyundai"
+                  stroke="#00FFFF" // Cyan
+                  strokeWidth={3}
+                  activeDot={{ r: 8, fill: '#00FFFF' }}
+                  dot={{ r: 5, fill: '#00FFFF' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </section>
 
-        <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업 정보</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">브랜치 / PR</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요청자</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">시간</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {loading && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-10 text-center text-gray-500 text-sm">
-                    작업 목록을 불러오는 중...
-                  </td>
-                </tr>
-              )}
-              {error && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-10 text-center text-red-500 text-sm">
-                    {error}
-                  </td>
-                </tr>
-              )}
-              {!loading && !error && tasks.map((task) => (
-                <tr key={task.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                      ${task.status === 'completed' ? 'bg-green-100 text-green-800' : ''}
-                      ${task.status === 'running' ? 'bg-blue-100 text-blue-800 animate-pulse' : ''}
-                      ${task.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : ''}
-                      ${task.status === 'failed' ? 'bg-red-100 text-red-800' : ''}
-                    `}>
-                      {task.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{task.subject}</div>
-                    <div className="text-xs text-gray-500 truncate max-w-xs">{task.body}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {task.branch_name ? (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded text-gray-600 block">
-                          {task.branch_name}
-                        </span>
-                        {task.pr_url && task.pr_url !== "PR 생성 실패" && (
-                          <a href={task.pr_url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline flex items-center">
-                             PR 링크 바로가기 🔗
-                          </a>
-                        )}
-                      </div>
-                    ) : <span className="text-gray-400 text-xs">-</span>}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.sender_email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-400 font-mono">
-                    {new Date(task.created_at).toLocaleTimeString('ko-KR', { hour12: false, hour: '2-digit', minute: '2-digit' })}
-                  </td>
-                </tr>
-              ))}
-              {!loading && !error && tasks.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-10 text-center text-gray-500 text-sm">
-                    아직 수신된 이메일 작업이 없습니다.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {/* Placeholder for other dashboard elements or game elements */}
+        <section className="bg-green-600 p-6 rounded-xl shadow-xl border-4 border-solid border-green-900 flex items-center justify-center">
+          <div className="text-center text-white">
+            <p className="text-2xl mb-5 font-bold" style={{ fontFamily: "'Press Start 2P', cursive" }}>
+              Explore the Mushroom Kingdom!
+            </p>
+            <button className="px-8 py-4 text-xl font-bold rounded-lg shadow-md bg-yellow-400 text-red-800 border-4 border-solid border-orange-700 hover:bg-yellow-300 transition-colors duration-300" style={{ fontFamily: "'Press Start 2P', cursive", textShadow: "2px 2px #8B0000" }}>
+              Start Game
+            </button>
+          </div>
+        </section>
+      </main>
 
-        <footer className="mt-8 flex justify-center">
-          <Link href="/about" className="text-gray-400 hover:text-indigo-600 text-sm flex items-center transition-colors">
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            프로젝트 소개 보기
-          </Link>
-        </footer>
-      </div>
-    </main>
+      {/* Add a link to import 'Press Start 2P' font if possible, or acknowledge it's a placeholder */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+      `}</style>
+    </div>
   );
 }
