@@ -1,83 +1,62 @@
-'use client';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { supabase } from "@/utils/supabase";
+import Link from "next/link";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/utils/supabase';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+export const revalidate = 0; // 실시간 반영을 위해 SSR 캐시 비활성화
 
-// Placeholder for Supabase client initialization if needed directly here, or assume utils/supabase is set up.
-// For this example, we'll simulate data fetching if Supabase is not directly accessible or for demonstration.
+export default async function Page() {
+  const { data: tasks, error } = await supabase
+    .from("agent_tasks")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-const fakeSalesData = [
-  { month: 'Jan', tesla: 5000, hyundai: 7000 },
-  { month: 'Feb', tesla: 5500, hyundai: 7200 },
-  { month: 'Mar', tesla: 6000, hyundai: 7500 },
-  { month: 'Apr', tesla: 6200, hyundai: 7800 },
-  { month: 'May', tesla: 6500, hyundai: 8000 },
-  { month: 'Jun', tesla: 6800, hyundai: 8200 },
-];
+  if (error) {
+    return <div className="p-8 text-red-500">Error loading tasks: {error.message}</div>;
+  }
 
-export default function DashboardPage() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // In a real application, you would fetch from Supabase like this:
-        // const { data, error: supabaseError } = await supabase.from('agent_tasks').select('*').order('created_at', { ascending: false });
-        // if (supabaseError) throw supabaseError;
-        // setTasks(data);
-
-        // Using fake data for demonstration as per requirements
-        setTasks([
-          { id: 1, status: 'completed', subject: 'Refactor user authentication', branch_name: 'feature/auth-refactor', pr_url: 'http://github.com/pr/1', sender_email: 'user1@example.com', created_at: '2023-10-26T10:00:00Z' },
-          { id: 2, status: 'running', subject: 'Implement new dashboard charts', branch_name: 'feature/charts', pr_url: 'http://github.com/pr/2', sender_email: 'user2@example.com', created_at: '2023-10-26T09:30:00Z' },
-          { id: 3, status: 'pending', subject: 'Fix bug in email notification', branch_name: 'fix/email-bug', pr_url: null, sender_email: 'user1@example.com', created_at: '2023-10-26T08:00:00Z' },
-          { id: 4, status: 'failed', subject: 'Deploy staging environment', branch_name: 'deploy/staging', pr_url: 'http://github.com/pr/3', sender_email: 'admin@example.com', created_at: '2023-10-25T18:00:00Z' },
-        ]);
-      } catch (err) {
-        setError('작업 목록을 불러오는 중 오류가 발생했습니다.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []); // Empty dependency array means this effect runs once after the initial render
+  // Fake sales data for Tesla and Hyundai
+  const salesData = [
+    { name: 'Q1 2026', tesla: 450000, hyundai: 300000 },
+    { name: 'Q2 2026', tesla: 480000, hyundai: 320000 },
+    { name: 'Q3 2026', tesla: 510000, hyundai: 340000 },
+    { name: 'Q4 2026', tesla: 530000, hyundai: 360000 },
+  ];
 
   return (
     <main className="min-h-screen p-8 bg-gray-50 text-gray-900">
       <div className="max-w-5xl mx-auto">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold tracking-tight">AI 에이전트 대시보드</h1>
-          <p className="text-gray-500 mt-2">이메일로 수신된 작업 의뢰와 현재 처리 상태를 모니터링합니다.</p>
+        {/* Mario World Theme Header */}
+        <header className="mb-10 text-center relative p-8 rounded-lg" style={{ backgroundColor: '#719CB7' /* Mario Sky Blue */ }}>
+          <div className="absolute inset-0 overflow-hidden -z-10">
+            {/* Placeholder elements for Mario theme */}
+            <div className="absolute top-4 left-4 w-16 h-16 bg-yellow-700 rounded-lg transform rotate-45 tile-brick"></div>
+            <div className="absolute top-8 right-8 w-16 h-16 bg-yellow-700 rounded-lg transform -rotate-45 tile-brick"></div>
+            <div className="absolute bottom-2 left-1/3 w-20 h-20 bg-green-700 rounded-full mushroom-pipe-element"></div>
+            <div className="absolute bottom-0 right-1/4 w-24 h-24 bg-green-700 rounded-full mushroom-pipe-element transform scale-x-[-1]"></div>
+            <div className="absolute top-1/3 left-1/3 w-12 h-12 bg-red-500 rounded-full mushroom-cap"></div>
+            <div className="absolute top-1/4 left-1/4 w-10 h-10 bg-red-500 rounded-full mushroom-cap transform rotate-12"></div>
+          </div>
+          <h1 className="text-5xl font-extrabold tracking-tight text-white shadow-text-mario mb-3">Super Mario World 1-1</h1>
+          <p className="text-xl text-white opacity-90">버섯 왕국으로 떠나는 모험!</p>
         </header>
 
-        <section className="mb-10 bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold mb-4">최근 작업 현황</h2>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={fakeSalesData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="tesla" stroke="#8884d8" activeDot={{ r: 8 }} name="Tesla Sales" />
-                <Line type="monotone" dataKey="hyundai" stroke="#82ca9d" activeDot={{ r: 8 }} name="Hyundai Sales" />
-              </LineChart>
-            </ResponsiveContainer>
+        {/* Sales Performance Chart */}
+        <section className="mb-10 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Sales Performance</h2>
+          <div className="flex justify-center items-center">
+            <LineChart width={700} height={350} data={salesData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
+              <XAxis dataKey="name" stroke="#6B7280" /> {/* Gray text */}
+              <YAxis stroke="#6B7280" /> {/* Gray text */}
+              <Tooltip />
+              <Legend wrapperStyle={{ padding: "10px" }} />
+              <Line type="monotone" dataKey="tesla" stroke="#DC2626" strokeWidth={2} activeDot={{ r: 8 }} dot={{ r: 4 }} /> {/* Red for Tesla */}
+              <Line type="monotone" dataKey="hyundai" stroke="#3B82F6" strokeWidth={2} dot={{ r: 4 }} /> {/* Blue for Hyundai */}
+            </LineChart>
           </div>
         </section>
 
+        {/* Original Task Table */}
         <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -90,21 +69,7 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {loading && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-10 text-center text-gray-500 text-sm">
-                    작업 목록을 불러오는 중...
-                  </td>
-                </tr>
-              )}
-              {error && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-10 text-center text-red-500 text-sm">
-                    {error}
-                  </td>
-                </tr>
-              )}
-              {!loading && !error && tasks.map((task) => (
+              {tasks?.map((task) => (
                 <tr key={task.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -140,7 +105,7 @@ export default function DashboardPage() {
                   </td>
                 </tr>
               ))}
-              {!loading && !error && tasks.length === 0 && (
+              {(!tasks || tasks.length === 0) && (
                 <tr>
                   <td colSpan="5" className="px-6 py-10 text-center text-gray-500 text-sm">
                     아직 수신된 이메일 작업이 없습니다.
